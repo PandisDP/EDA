@@ -17,15 +17,26 @@ void destroy_array(){
     vmax = 0;
 }
 
+void resize_2(){
+    int *pTemp = new int[vmax+10];
+    for (auto i=0u;i< vcount; i++){
+        *(pTemp +i)=*(pVect+i);
+    }
+    delete [] pVect;
+    pVect=pTemp;
+    vmax +=10;
+    cout << "Vector resized vcount=" << vcount << " vmax=" << vmax << endl;
+}
 void resize(){
     int *pTemp = new int[vmax+10];
-    for(auto i = 0u ; i < vcount ; ++i)
+    for(auto i = 0u ; i < vcount ; ++i){
         pTemp[i]   = pVect[i];
         // *(pTemp+i) = pVect[i];
         // pTemp[i]   = *(pVect+i);
         // *(pTemp+i) = *(pVect+i);
         // *(i+pTemp) = pVect[i];
         // i[pTemp]   = pVect[i];
+        cout<<pVect<<endl;}
     delete [] pVect;
     pVect = pTemp;
     vmax +=10;
@@ -34,7 +45,7 @@ void resize(){
 
 void insert(int val){
     if(vcount == vmax) // Array is already full?
-        resize();
+        resize_2();
     pVect[vcount++] = val;
     cout << "Val=" << val << " inserted, vcount=" << vcount << " vmax=" << vmax << endl;
 }

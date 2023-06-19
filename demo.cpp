@@ -7,7 +7,7 @@ void DemoArray()
 {
     cout << "Hello from DemoArray()" <<endl;
     create_array();
-    for(auto i = 0 ; i < 15 ; i++)
+    for(auto i = 0 ; i < 23 ; i++)
         insert(i);
     print();
     destroy_array();

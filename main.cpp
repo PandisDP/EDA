@@ -9,8 +9,8 @@ using namespace std;
 int main()
 {
     DemoArray();
-    DemoBinaryTree();
-    DemoHash();
+    //DemoBinaryTree();
+    //DemoHash();
 
     // DemoPreandPostIncrement();
     return 0;
