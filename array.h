@@ -19,6 +19,4 @@ public:
     
 };
 
-
-
 #endif // __ARRAY_H__

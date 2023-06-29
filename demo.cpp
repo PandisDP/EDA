@@ -1,7 +1,26 @@
 #include <iostream> // cout
 #include "demo.h"
 #include "array.h"
+#include "pila.h"
+
 using namespace std;
+void DemoPila(){
+    pila p;
+    cout<<" Testing of Apilamiento"<<endl;
+    for (int i=0;i<=10;i++){
+        p.apilar(i);
+    }
+    cout<<"Print Stack with elements"<<endl;
+    p.print();
+    cout<<"\nDelete the Five first elements"<<endl;
+    for(auto i=0;i<5;i++){
+        int k;
+        k=p.desapilar();
+        cout<<"The element delete is :"<<k<<endl;
+    }
+    p.print();
+    cout<<"End"<<endl;
+}
 
 void DemoArray(){   
     cout << "Hello from DemoArray()" <<endl;
