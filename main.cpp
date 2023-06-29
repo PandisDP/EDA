@@ -13,6 +13,6 @@ int main()
     //DemoBinaryTree();
     //DemoHash();
     // DemoPreandPostIncrement();
-    DemoPila();
+    DemoPila(10);
     return 0;
 }

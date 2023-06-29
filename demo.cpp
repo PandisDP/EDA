@@ -1,14 +1,22 @@
-#include <iostream> // cout
+#include <iostream> 
+#include <random>
 #include "demo.h"
 #include "array.h"
 #include "pila.h"
 
 using namespace std;
-void DemoPila(){
-    pila p;
-    cout<<" Testing of Apilamiento"<<endl;
-    for (int i=0;i<=10;i++){
-        p.apilar(i);
+int Create_Aleatorio_number(int p){
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> dist(1,p);
+    return dist(gen);
+}
+void DemoPila(int x_n){
+    pila p; 
+    cout<<"Add elements to Stack"<<endl;
+    for (int i=0;i<=x_n;i++){
+        int n= Create_Aleatorio_number(x_n);
+        p.apilar(n);
     }
     cout<<"Print Stack with elements"<<endl;
     p.print();
@@ -16,10 +24,16 @@ void DemoPila(){
     for(auto i=0;i<5;i++){
         int k;
         k=p.desapilar();
-        cout<<"The element delete is :"<<k<<endl;
+        cout<<"The element deleted is :"<<k<<endl;
     }
     p.print();
-    cout<<"End"<<endl;
+    cout<<"\nBrowse element"<<endl;
+    int n_find=4;
+    if (p.Browse_element(n_find))
+        cout<<"This element exist into Stack"<<endl;
+    else    
+        cout<<"This element does not exist into Stack"<<endl; 
+    cout<< "\nThis Stack has "<<p.NCount()<< " elements"<<endl;       
 }
 
 void DemoArray(){   

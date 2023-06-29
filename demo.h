@@ -4,6 +4,6 @@
 //void DemoArray();
 //void DemoBinaryTree();
 //void DemoHash();
-void DemoPila();
+void DemoPila(int p);
 
 #endif // __DEMO_H__

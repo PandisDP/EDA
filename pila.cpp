@@ -55,3 +55,26 @@ void pila::print(){
     }
     cout<<endl;
 }
+
+bool pila::Browse_element(int x){
+    pNode pTemp;
+    pTemp= pTop;
+    while (pTemp!=nullptr){
+        if(x== pTemp->dato)
+            return true;
+        else
+            pTemp= pTemp->sig;
+    }
+    return false;
+}
+
+int pila::NCount(){
+    pNode pTemp;
+    pTemp= pTop;
+    int n=0;
+    while (pTemp != nullptr){
+        n=n+1;
+        pTemp=pTemp->sig;
+    }
+    return n;
+}

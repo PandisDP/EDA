@@ -20,6 +20,8 @@ public:
     void apilar(int x);
     int desapilar();
     void print();
+    bool Browse_element(int x);
+    int NCount();
 };
 
 #endif  //PILA_H
