@@ -3,6 +3,7 @@
 #include "demo.h"
 #include "array.h"
 #include "pila.h"
+#include "queue.h"
 
 using namespace std;
 int Create_Aleatorio_number(int p){
@@ -11,6 +12,25 @@ int Create_Aleatorio_number(int p){
     uniform_int_distribution<int> dist(1,p);
     return dist(gen);
 }
+void DemoQueue(int x_n){
+    Queue p; 
+    cout<<"Add elements to Queue"<<endl;
+    for (int i=0;i<=x_n;i++){
+        int n= Create_Aleatorio_number(x_n);
+        p.InQueue(n);
+    }
+    cout<<"Print Queue with elements"<<endl;
+    p.Print();
+    cout<<"\nDelete the Five first elements"<<endl;
+    for(auto i=0;i<5;i++){
+        int k;
+        k=p.DQueue();
+        cout<<"The element deleted is :"<<k<<endl;
+    }
+    p.Print();
+    cout<<"\nThe length of Queue is : "<<p.NCount()<< endl;
+}
+
 void DemoPila(int x_n){
     pila p; 
     cout<<"Add elements to Stack"<<endl;

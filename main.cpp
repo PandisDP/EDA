@@ -2,6 +2,7 @@
 #include "demo.h"
 #include "CPPDemo.h"
 #include "pila.h"
+#include "queue.h"
 // #include "array.h"
 
 using namespace std;
@@ -13,6 +14,7 @@ int main()
     //DemoBinaryTree();
     //DemoHash();
     // DemoPreandPostIncrement();
-    DemoPila(10);
+    //DemoPila(10);
+    DemoQueue(10);
     return 0;
 }
