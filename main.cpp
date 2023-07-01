@@ -3,6 +3,7 @@
 #include "CPPDemo.h"
 #include "pila.h"
 #include "queue.h"
+#include "list.h"
 // #include "array.h"
 
 using namespace std;
@@ -15,6 +16,7 @@ int main()
     //DemoHash();
     // DemoPreandPostIncrement();
     //DemoPila(10);
-    DemoQueue(10);
+    //DemoQueue(10);
+    DemoList(30);
     return 0;
 }

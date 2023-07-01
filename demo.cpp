@@ -4,6 +4,7 @@
 #include "array.h"
 #include "pila.h"
 #include "queue.h"
+#include "list.h"
 
 using namespace std;
 int Create_Aleatorio_number(int p){
@@ -97,3 +98,23 @@ void DemoHash()
     cout << "Hello from DemoHash()" <<endl;
 }
 
+void DemoList(int p){
+    List lt; 
+    cout<<"Add elements to List"<<endl;
+    for (int i=0;i<=p;i++){
+        int n= Create_Aleatorio_number(p);
+        lt.Insert_Node(n);
+    }
+    cout<<"Print elements of List"<<endl;
+    lt.Print();
+    cout<<"Delete the odd elements of List"<<endl;
+    pLNode tmp;
+    tmp= lt.pL;
+    while(tmp!=nullptr){
+        if (tmp->dato%2==0)
+            lt.Delete_Node(tmp->dato);
+        tmp=tmp->Next;    
+    }
+    cout<<"Print elements of  Final List"<<endl;
+    lt.Print();
+}

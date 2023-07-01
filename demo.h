@@ -5,6 +5,7 @@
 //void DemoBinaryTree();
 //void DemoHash();
 //void DemoPila(int p);
-void DemoQueue(int p);
+//void DemoQueue(int p);
+void DemoList(int p);
 
 #endif // __DEMO_H__
