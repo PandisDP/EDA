@@ -5,6 +5,7 @@
 #include "pila.h"
 #include "queue.h"
 #include "list.h"
+#include "list2E.h"
 
 using namespace std;
 int Create_Aleatorio_number(int p){
@@ -12,6 +13,31 @@ int Create_Aleatorio_number(int p){
     mt19937 gen(rd());
     uniform_int_distribution<int> dist(1,p);
     return dist(gen);
+}
+void DemoList2E(int x_n){
+    List2E p,q;
+    cout<<"Add elements to List 2E"<<endl;
+    for (int i=0;i<=x_n;i++){
+        int n= Create_Aleatorio_number(x_n);
+        p.Insert(n);
+    }
+    cout<<"Print List 2E with elements"<<endl;
+    p.Print();
+    cout<<"\nDelete the even elements"<<endl;
+    int t;
+    for(int i=0;i< p.Length();i++){
+        t= p.Get_Value(i);
+        if (t%2==0){
+            p.Delete(t);
+            q.Insert(t);
+        }
+    }
+    cout<<"Print List 2E Q with odd elements"<<endl;
+    p.Print();
+    cout<<"Print List 2E Q with even elements"<<endl;
+    q.Print();
+    cout<<"Length "<<p.Length()<<endl;
+    
 }
 void DemoQueue(int x_n){
     Queue p; 

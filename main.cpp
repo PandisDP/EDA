@@ -4,6 +4,7 @@
 #include "pila.h"
 #include "queue.h"
 #include "list.h"
+#include "list2E.h"
 // #include "array.h"
 
 using namespace std;
@@ -17,6 +18,7 @@ int main()
     // DemoPreandPostIncrement();
     //DemoPila(10);
     //DemoQueue(10);
-    DemoList(30);
+    //DemoList(30);
+    DemoList2E(33);
     return 0;
 }
