@@ -11,7 +11,7 @@ class general_iterator
     //typedef class general_iterator<Container> Parent;
     typedef general_iterator<Container, IteratorBase> myself; // 
     
-protected:
+public:
     Container *m_pContainer;
     Node      *m_pNode;
 public:

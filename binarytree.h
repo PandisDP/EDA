@@ -7,9 +7,326 @@
 #include "keynode.h"
 #include "xtrait.h"
 #include <vector>
-#include "iterator_btree.h"
-//#include "avl.h"
 using namespace std;
+#define _DEF(_Container,_iter)  \
+public: \
+    typedef class general_iterator<_Container, _iter<Container> > Parent;     \
+    typedef typename _Container::Node                             Node;       \
+    typedef _iter<_Container>                                     myself;
+
+// Iterator in order
+template <typename Container>
+class bt_iter_inorder : public general_iterator<Container,  class bt_iter_inorder<Container>> // 
+{  _DEF(Container, bt_iter_inorder); // TODO: llevar esta misma idea a todos container ya existentes
+
+  private:
+    Node *m_pRoot=nullptr;
+    size_t count=0;
+    size_t m_count;
+  public:
+    bt_iter_inorder(Container *pContainer, Node *pNode,Node *pRoot,size_t N_count) : Parent (pContainer,pNode),m_pRoot(pRoot),m_count(N_count) {}
+    bt_iter_inorder(myself &other)  : Parent (other),m_pRoot(other.m_pRoot),m_count(other.m_count) {}
+    bt_iter_inorder(myself &&other) : Parent(other) {} // Move constructor C++11 en adelante
+
+  private:
+    Node *in_order(Node *pNode){
+        if(pNode){
+            if(count==1)
+                pNode->setp_status(true);
+            if(pNode->getChild(0) && pNode->getChild(0)->get_status()==false){
+                while(pNode->getChild(0)&&pNode->getChild(0)->get_status()==false)
+                    pNode= pNode->getChild(0);   
+                pNode->setp_status(true);         
+                return pNode;
+            }
+            else{
+                if(pNode->getChild(1)&& pNode->getChild(1)->get_status()==false){
+                    pNode=pNode->getChild(1);
+                    if(!pNode->getChild(0)||pNode->getChild(0)->get_status()==true){
+                        pNode->setp_status(true);
+                        return pNode;
+                    }
+                    pNode= in_order(pNode);
+                    return pNode;
+                }
+                else{
+                    Node *pParent = pNode->getParent();
+                    Node *Child_0= pParent->getChild(0);
+                    if(Child_0==pNode){
+                        pNode=pParent;
+                        pNode->setp_status(true);
+                        return pNode;
+                    }
+                    else{
+                        while(pNode==pNode->getParent()->getChild(1)){
+                            pNode=pNode->getParent();
+                        } 
+                        pNode=pNode->getParent();
+                        pNode->setp_status(true);
+                        return pNode;
+                    }
+                }      
+            }
+        }
+        else{
+            std::cout<<"Ingreso null"<<endl;
+            return nullptr;
+        }
+    }    
+    
+    void fill_status_i(Node *pNode){
+        if(pNode) {
+            Node *pParent = pNode->getParent();
+            fill_status_i(pNode->getChild(0));
+            pNode->setp_status(false);
+            fill_status_i(pNode->getChild(1));
+        }
+    }
+    public:
+    void fill_status(){
+        Node *pNode=m_pRoot; 
+        fill_status_i(pNode);
+        count=0;
+    }
+    bt_iter_inorder operator++() {
+        count=count+1;
+        Node *NextNode=nullptr;
+        cout<<"\nNº: "<<m_count<<"-"<<count<<"--"<<Parent::m_pNode<<endl;
+        if(m_count>count)
+            NextNode= in_order(Parent::m_pNode);
+        cout<<"\nNode : "<<NextNode->getData()<<endl;    
+        if(NextNode && m_count>count)
+            Parent::m_pNode= NextNode;
+        else{
+            cout<<"\nIngrese"<<endl;
+            Parent::m_pNode= nullptr;
+            fill_status();
+            cout<<"\nSali"<<endl;
+        }
+        return *this;  
+    }
+
+    
+};
+// Iterator in pos order
+template <typename Container>
+class bt_iter_postorder : public general_iterator<Container,  class bt_iter_postorder<Container>> // 
+{  _DEF(Container, bt_iter_postorder); // TODO: llevar esta misma idea a todos container ya existentes
+
+  private:
+    Node *m_pRoot=nullptr;
+    Node *m_pNodei=nullptr;
+    size_t count=0;
+    size_t m_count=0;
+  public:
+    bt_iter_postorder(Container *pContainer, Node *pNode,Node *pRoot,size_t N_count) : Parent (pContainer,pNode),m_pRoot(pRoot),m_count(N_count),m_pNodei(pNode) {}
+    bt_iter_postorder(myself &other)  : Parent (other),m_pRoot(other.m_pRoot),m_count(other.m_count),m_pNodei(other.m_pNodei) {}
+    bt_iter_postorder(myself &&other) : Parent(other) {} // Move constructor C++11 en adelante
+
+  private:
+    Node *post_order(Node *pNode){
+        if(pNode){
+            if(count==1)
+                pNode->setp_status(true); 
+            //Direction 0;    
+            if(pNode->getChild(0) && pNode->getChild(0)->get_status()==false){
+                while(pNode->getChild(0)&&pNode->getChild(0)->get_status()==false)
+                    pNode= pNode->getChild(0); 
+                if(!pNode->getChild(1)){
+                    pNode->setp_status(true);         
+                    return pNode;
+                }
+                else{
+                    pNode=pNode->getChild(1);
+                    pNode= post_order(pNode);
+                    return pNode;
+                }    
+            }
+            else{
+                //Direction 1;
+                if(pNode->getChild(1)&& pNode->getChild(1)->get_status()==false){
+                    pNode=pNode->getChild(1);
+                    pNode= post_order(pNode);
+                    return pNode;
+                }
+                else{
+                    //Does not have childs
+                    Node *pParent = pNode->getParent();
+                    Node *Child_0= pParent->getChild(0);
+                    if(Child_0==pNode){
+                        pNode=pParent;
+                        if(pNode->getChild(1)){
+                            if(pNode->getChild(1)->getChild(0)==nullptr && pNode->getChild(1)->getChild(1)==nullptr){
+                                pNode=pNode->getChild(1);
+                                pNode->setp_status(true);
+                                return pNode;
+                            }
+                            else{
+                                pNode=pNode->getChild(1);
+                                pNode= post_order(pNode);
+                                return pNode;
+                            }
+                        }
+                        else{
+                            pNode->setp_status(true);
+                            return pNode;
+                        }  
+                    }
+                    else{
+                        //Go to dir 1
+                        //cout<<"\n"<<pNode<<"-"<<m_pNodei<<endl;
+                        if(count==1){
+                            if(pNode==m_pNodei)
+                                pNode=pParent;
+                            //cout<<"\nLeave0: "<<pNode->getData()<<endl;
+                            pNode->setp_status(true);
+                            return pNode;
+                        } 
+                        else{
+                            if(!pNode->get_status()){
+                                //cout<<"\nLeave1: "<<pNode->getData()<<endl;
+                                pNode->setp_status(true);
+                                return pNode; 
+                            }
+                            else{
+                              pNode=pParent;
+                              //cout<<"\nLeave2 : "<<pNode->getData()<<endl;
+                              pNode->setp_status(true);
+                              return pNode;  
+                            }
+                        }  
+                    }
+                }      
+            }
+        }
+        else{
+            std::cout<<"Ingreso null"<<endl;
+            return nullptr;
+        }
+    }    
+    
+    void fill_status_i(Node *pNode){
+        if(pNode) {
+            Node *pParent = pNode->getParent();
+            fill_status_i(pNode->getChild(0));
+            pNode->setp_status(false);
+            fill_status_i(pNode->getChild(1));
+        }
+    }
+    public:
+    void fill_status(){
+        Node *pNode=m_pRoot; 
+        fill_status_i(pNode);
+        count=0;
+    }
+    bt_iter_postorder operator++() {
+        count=count+1;
+        Node *NextNode=nullptr;
+        if(m_count>count)
+            NextNode= post_order(Parent::m_pNode);
+        if(NextNode && m_count>count)
+            Parent::m_pNode= NextNode;
+        else{
+            Parent::m_pNode= nullptr;
+            fill_status();
+        }
+        return *this;
+    }
+};
+// Iterator in pre order
+template <typename Container>
+class bt_iter_preorder : public general_iterator<Container,  class bt_iter_preorder<Container>> // 
+{  _DEF(Container, bt_iter_preorder); // TODO: llevar esta misma idea a todos container ya existentes
+
+  private:
+    Node *m_pRoot=nullptr;
+    size_t count=0;
+    size_t m_count;
+  public:
+    bt_iter_preorder(Container *pContainer, Node *pNode,Node *pRoot,size_t N_count) : Parent (pContainer,pNode),m_pRoot(pRoot),m_count(N_count) {}
+    bt_iter_preorder(myself &other)  : Parent (other),m_pRoot(other.m_pRoot),m_count(other.m_count) {}
+    bt_iter_preorder(myself &&other) : Parent(other) {} // Move constructor C++11 en adelante
+
+  private:
+    Node *pre_order(Node *pNode){
+        if(pNode){
+            if(count==1)
+               pNode->setp_status(true);
+            if(pNode->getChild(0) && pNode->getChild(0)->get_status()==false){
+                pNode=pNode->getChild(0);
+                pNode->setp_status(true);
+                return pNode;
+               }
+            else{
+                if(pNode->getChild(1) && pNode->getChild(1)->get_status()==false){
+                    pNode=pNode->getChild(1);
+                    pNode->setp_status(true);
+                    return pNode;
+                }
+                else{
+                    Node *pParent=pNode->getParent();
+                    if(pParent->getChild(0)==pNode){
+                        if(pNode->getParent()->getChild(1)){
+                            pNode=pNode->getParent()->getChild(1);
+                            pNode->setp_status(true);
+                            return pNode;
+                        }
+                        else{
+                            pNode=pre_order(pParent);
+                            return pNode;
+                        } 
+                    }
+                    else{
+                        while(pNode->getParent()->getChild(1)==pNode){
+                            pNode=pNode->getParent();
+                        }
+                        pNode=pNode->getParent();
+                        pNode= pre_order(pNode);
+                        return pNode;
+                    }
+
+                }  
+            }   
+
+        }
+        else{
+            return nullptr;
+        }
+
+    }
+    
+    void fill_status_i(Node *pNode){
+        if(pNode) {
+            Node *pParent = pNode->getParent();
+            fill_status_i(pNode->getChild(0));
+            pNode->setp_status(false);
+            fill_status_i(pNode->getChild(1));
+        }
+    }
+    public:
+    void fill_status(){
+        Node *pNode=m_pRoot; 
+        fill_status_i(pNode);
+        count=0;
+    }
+    bt_iter_preorder operator++() {
+        count=count+1;
+        Node *NextNode=nullptr;
+        //cout<<"\nData: "<<m_count<<"-"<<count<<endl;
+        if(m_count>count)
+            NextNode= pre_order(Parent::m_pNode);
+        //cout<<"\n"<<NextNode->getData()<<endl;    
+        if(NextNode && m_count>count)
+            Parent::m_pNode= NextNode;
+        else{
+            Parent::m_pNode= nullptr;
+            fill_status();
+        }
+        return *this;
+    }
+
+    
+};
 
 template <typename Traits>
 class NodeBinaryTree
@@ -18,7 +335,7 @@ class NodeBinaryTree
         using KeyNode         = typename Traits::Node;
         using value_type      = typename Traits::value_type;
         using LinkedValueType = typename Traits::LinkedValueType;
-    protected:
+    private:
         using Node = NodeBinaryTree<Traits>;
     public:
         KeyNode  m_data;
@@ -35,7 +352,6 @@ class NodeBinaryTree
         value_type getData()  { return m_data.getData();    }
         value_type &getDataRef()  { return m_data.getDataRef();    }
  
-        // TODO: review if these functions must remain public/private
         void      setpChild(const Node *pChild, size_t pos)  {   m_pChild[pos] = pChild;}
         void      setp_status(bool esp){m_status=esp;}
         bool      get_status(){return m_status;}
@@ -64,7 +380,6 @@ struct BinaryTreeDescTraits
 using TraitBTreeIntInt   = XTrait<int,int>;
 using Traits_BNTAsc= BinaryTreeAscTraits<TraitBTreeIntInt> ;
 using Traits_BNTDesc= BinaryTreeDescTraits<TraitBTreeIntInt> ;
-
 template <typename Traits>
 class BinaryTree
 {
@@ -82,11 +397,10 @@ class BinaryTree
     Node    *m_pRoot = nullptr;
     size_t   m_size  = 0;
     CompareFn Compfn;
-  public:
+  public: 
     void    set_m_pRoot(Node *Root){m_pRoot=Root;}
     size_t  size()  const       { return m_size;       }
     bool    empty() const       { return size() == 0;  }
-    // DO: insert must receive two paramaters: elem and LinkedValueType value
     virtual void insert(value_type elem, LinkedValueType elem2) { 
         internal_insert1(elem,elem2,nullptr, m_pRoot); 
     }
@@ -99,8 +413,8 @@ class BinaryTree
         {   ++m_size;
             return (rpOrigin = CreateNode(pParent,elem,elem2));
         }
-        //size_t branch = Compfn(rpOrigin->getDataRef() ,elem);
-        size_t branch = Compfn(elem,rpOrigin->getDataRef());
+         //size_t branch = Compfn(rpOrigin->getDataRef() ,elem);
+         size_t branch =Compfn(elem,rpOrigin->getDataRef());
         return internal_insert1(elem,elem2,rpOrigin,rpOrigin->getChildRef(branch));
     }
 public:
@@ -111,11 +425,9 @@ public:
     void inorder(void (*visit) (value_type& item))
     {   inorder(m_pRoot, visit);    }
 
-public:
+protected:
     void inorder(Node *pNode, ostream &os, size_t level)
     {
-        // foreach(*this, fn);
-        // foreach(begin(), end(), fn);
         if( pNode )
         {   Node *pParent = pNode->getParent();
             inorder(pNode->getChild(0), os, level+1);
@@ -124,8 +436,6 @@ public:
         }
     }
 
-    // TODO: generalize this function by using iterators and apply any function
-    // Create a new iterator to walk in postorder
     void postorder(Node  *pNode, ostream &os, size_t level){
         //foreach(postorderbegin(), postorderend(), fn)
         if( pNode ){   
@@ -134,8 +444,7 @@ public:
             os << " --> " << pNode->getDataRef();
         }
     }
-    // TODO: generalize this function by using iterators and apply any function
-    // Create a new iterator to walk in postorder
+
     void preorder(Node  *pNode, ostream &os, size_t level){
         //foreach(preorderbegin(), preorderend(), fn)
         if( pNode ){   
@@ -144,7 +453,7 @@ public:
             preorder(pNode->getChild(1), os, level+1);            
         }
     }
-
+    
     virtual void print(Node* pNode, std::ostream& os, size_t level){
         if (pNode) {
             Node* pParent = pNode->getParent();
@@ -156,7 +465,6 @@ public:
             print(pNode->getChild(0), os, level + 1);
         }
    }
-    // TODO: generalize this function by using iterators and apply any function
     void inorder(Node  *pNode, void (*visit) (value_type& item))
     {
         if( pNode )
@@ -213,7 +521,7 @@ public:
              while (pNode->getChild(dir)) {
                 pNode = pNode->getChild(dir);
             }
-            if(pNode->getChild(1)==nullptr){
+            if(!pNode->getChild(1)){
                 return pNode;
             }
             else{
@@ -228,16 +536,16 @@ public:
         Node* lnode_0 = find_last_node(m_pRoot,0);
         Node* lnode_1 = find_last_node(m_pRoot,1);
         if(m_pRoot==lnode_1){
-            in_iterator iter(this,lnode_0,m_pRoot); 
+            in_iterator iter(this,lnode_0,m_pRoot,m_size); 
             return iter;
         }
         else{
             if(m_pRoot==lnode_0){
-                in_iterator iter(this,m_pRoot,m_pRoot); 
+                in_iterator iter(this,m_pRoot,m_pRoot,m_size); 
                 return iter;
             }
             else{
-                in_iterator iter(this,lnode_0,m_pRoot);   
+                in_iterator iter(this,lnode_0,m_pRoot,m_size);   
                 return iter; 
             }
         }    
@@ -246,15 +554,15 @@ public:
         Node* lnode_0 = find_last_node(m_pRoot,0);
         Node* lnode_1 = find_last_node(m_pRoot,1);
         if(m_pRoot==lnode_1){
-            in_iterator iter(this,lnode_1,m_pRoot); 
+            in_iterator iter(this,nullptr,m_pRoot,m_size); 
             return iter;
         }else{
             if(m_pRoot==lnode_0){
-                in_iterator iter(this,lnode_1,m_pRoot); 
+                in_iterator iter(this,nullptr,m_pRoot,m_size); 
                 return iter;
             }
             else{
-                in_iterator iter(this, lnode_1,m_pRoot);   
+                in_iterator iter(this, nullptr,m_pRoot,m_size);   
                 return iter; 
             }
         }       
@@ -264,16 +572,16 @@ public:
         Node* lnode_0 = find_last_node_pos(m_pRoot,0);
         Node* lnode_1 = find_last_node_pos(m_pRoot,1);
         if(m_pRoot==lnode_1){
-            post_iterator iter(this,lnode_0,m_pRoot); 
+            post_iterator iter(this,lnode_0,m_pRoot,m_size); 
             return iter;
         }
         else{
             if(m_pRoot==lnode_0){
-                post_iterator iter(this,lnode_1,m_pRoot); 
+                post_iterator iter(this,lnode_1,m_pRoot,m_size); 
                 return iter;
             }
             else{
-                post_iterator iter(this,lnode_0,m_pRoot);   
+                post_iterator iter(this,lnode_0,m_pRoot,m_size);   
                 return iter; 
             }
         }    
@@ -282,29 +590,28 @@ public:
         Node* lnode_0 = find_last_node_pos(m_pRoot,0);
         Node* lnode_1 = find_last_node_pos(m_pRoot,1);
         if(m_pRoot==lnode_1){
-            post_iterator iter(this,lnode_1,m_pRoot); 
+            post_iterator iter(this,nullptr,m_pRoot,m_size); 
             return iter;
         }else{
             if(m_pRoot==lnode_0){
-                post_iterator iter(this,m_pRoot,m_pRoot); 
+                post_iterator iter(this,nullptr,m_pRoot,m_size); 
                 return iter;
             }
             else{
-                post_iterator iter(this, m_pRoot,m_pRoot);   
+                post_iterator iter(this,nullptr,m_pRoot,m_size);   
                 return iter; 
             }
         }       
      }
      // Iterator preorder
     pre_iterator begin_pre() { 
-        pre_iterator iter(this,m_pRoot,m_pRoot);
+        pre_iterator iter(this,m_pRoot,m_pRoot,m_size);
         return iter; 
-
     }
     pre_iterator end_pre() {
         Node* lnode_0 = find_last_node_pre(m_pRoot,0);
         Node* lnode_1 = find_last_node_pre(m_pRoot,1);
-        pre_iterator iter(this,lnode_1,m_pRoot); 
+        pre_iterator iter(this,nullptr,m_pRoot,m_size); 
         return iter;
      }
 };

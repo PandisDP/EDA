@@ -4,7 +4,7 @@
 #include <cassert>
 #include "types.h"
 #include "binarytree.h"
-#include "iterator_btree.h"
+//#include "iterator_btree.h"
 using namespace std;
 
 template <typename Traits>
@@ -78,9 +78,9 @@ class CAVL: public BinaryTree<Traits>
     using CompareFn = typename Traits::CompareFn;
     using Base = BinaryTree<Traits>;
     typedef CAVL<Traits>                myself;
-    typedef bt_iter_inorder<myself>    in_iterator;
-    typedef bt_iter_postorder<myself>  post_iterator;
-    typedef bt_iter_preorder<myself> pre_iterator;
+    // typedef bt_iter_inorder<myself>    in_iterator;
+    // typedef bt_iter_postorder<myself>  post_iterator;
+    // typedef bt_iter_preorder<myself> pre_iterator;
 
 public:
   Node *pNode_route=nullptr;
@@ -91,7 +91,7 @@ public:
 public: 
     virtual void  insert(value_type elem, LinkedValueType elem2) override{ 
         internal_insert1(elem,elem2,nullptr, Base::m_pRoot); 
-        Update_AVL_Tree(pNode_route);// Actualiza la altura del arbol al insertar un Node
+        //Update_AVL_Tree(pNode_route);// Actualiza la altura del arbol al insertar un Node
     }
     virtual Node *internal_insert1(value_type &elem, LinkedValueType &elem2, Node *pParent, Node *&rpOrigin)override{
         if(!rpOrigin ) //  llegué al fondo de una rama
@@ -117,6 +117,7 @@ public:
             print(pNode->getChild(0), os, level + 1);
         }
    }
+    
     void Update_height(Node *pNode){
       while(pNode->getParent()){
           size_t h=1+max(height(pNode->getParent()->getChild(0)), height(pNode->getParent()->getChild(1)));
