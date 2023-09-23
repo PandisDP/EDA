@@ -16,8 +16,6 @@ template <typename Iterator, typename F>
 void foreach(Iterator ItBegin, Iterator ItEnd, F ope)
 {
   auto iter = ItBegin;
-  cout<<"IterI: "<<iter.m_pNode->getData()<<endl;
-  cout<<"IterF: "<<ItEnd.m_pNode<<endl;
   for(; iter != ItEnd;++iter){
     ope(*iter);
   }

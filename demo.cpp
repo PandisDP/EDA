@@ -11,7 +11,8 @@
 #include "avl.h"
 #include <random>
 using namespace std;
-
+using namespace AVL_Namespace;
+using namespace BinaryTree_Namespace;
 template <typename T, int N>
 void increment(T &x)
 {  x+= N; }
@@ -267,13 +268,13 @@ void DemoBinaryTree()
     vector<int> vect5={41,49,22,10,26,44,54,25,33,59,8,5,9,1,30,2,55,46,18,43,40};
     vector<int> vect6= {11,6,15,12,20,3,2,5,9,7,10};
     vector<int> vect7= {25,13,37,9,18,27,53,45,37};
-    for(auto i=0;i<=8;i++){
+    for(auto i=0;i<=20;i++){
         int tmp= dist(gen);
         int tmp2= dist(gen);
-        cout<<vect7[i]<<"-->";
-        bt.insert(vect7[i],tmp2);
-        // cout<<tmp<<"-->";
-        // bt.insert(tmp,tmp2);
+        // cout<<vect7[i]<<"-->";
+        // bt.insert(vect7[i],tmp2);
+        cout<<tmp<<"-->";
+        bt.insert(tmp,tmp2);
     }
     cout<<endl;
     bt.print(cout);
@@ -329,8 +330,7 @@ void DemoAVL()
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<int> dist(1,60);
-    CAVL<Traits_AVLDesc>bt;
-    //BinaryTree<Traits_BNTDesc> bt;
+    AVL_Namespace::CAVL<Traits_AVLAsc>bt;
     vector<int> vect0={75,65,22,8,45,20,5,7,46,48,40,41};
     vector<int> vect1={35,32,30,27,25,22,11,5,3,2,1};
     vector<int> vect6= {20,15,12,11,10,9,7,6,5,3,2,1};
@@ -347,6 +347,9 @@ void DemoAVL()
     vector<int> vect_s= {};
     vector<int> vect_r2={5,11,12,40,4,32,41,20,40,33,27,25,47,24,9,46,3,8,36,20};
     vector<int> vect_r={41,54,46,25,53,53,44,39,50,20,39,55,57,46,42,39,12,37,45,10};
+    vector<int> vect_t={47,5,60,5,43,11,7,30,49,13,18,30,13,50,16,17,39,23,12,9};
+    vector<int> vect_tt={4,19,18,9,57,22,11,22,10,37,31,11,7,38,43,59,32,58,1,18};
+    vector<int> vect_ttt={28,18,51,1,29,32,10,17,32,21,30,34,14,10,11,37,45,6,39,60};
     for (auto i=0;i<=19;i++){
         int tmp= dist(gen);
         int tmp2= dist(gen);
@@ -358,7 +361,7 @@ void DemoAVL()
         // int tmp2= dist(gen);
         cout<<vect_s[i]<<"-->";
         bt.insert(vect_s[i],0);
-        //cout<<tmp<<"-->";
+        // cout<<tmp<<"-->";
         // vect_r.push_back(tmp);
         // bt.insert(tmp,tmp2);
     }

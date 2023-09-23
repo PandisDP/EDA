@@ -7,6 +7,7 @@
 #include "keynode.h"
 #include "xtrait.h"
 #include <vector>
+namespace BinaryTree_Namespace {
 using namespace std;
 #define _DEF(_Container,_iter)  \
 public: \
@@ -91,17 +92,13 @@ class bt_iter_inorder : public general_iterator<Container,  class bt_iter_inorde
     bt_iter_inorder operator++() {
         count=count+1;
         Node *NextNode=nullptr;
-        cout<<"\nNº: "<<m_count<<"-"<<count<<"--"<<Parent::m_pNode<<endl;
-        if(m_count>count)
+        if(count<m_count)
             NextNode= in_order(Parent::m_pNode);
-        cout<<"\nNode : "<<NextNode->getData()<<endl;    
-        if(NextNode && m_count>count)
+        if(NextNode && count<m_count)
             Parent::m_pNode= NextNode;
         else{
-            cout<<"\nIngrese"<<endl;
             Parent::m_pNode= nullptr;
             fill_status();
-            cout<<"\nSali"<<endl;
         }
         return *this;  
     }
@@ -398,17 +395,16 @@ class BinaryTree
     size_t   m_size  = 0;
     CompareFn Compfn;
   public: 
-    void    set_m_pRoot(Node *Root){m_pRoot=Root;}
     size_t  size()  const       { return m_size;       }
     bool    empty() const       { return size() == 0;  }
-    virtual void insert(value_type elem, LinkedValueType elem2) { 
+    void insert(value_type elem, LinkedValueType elem2) { 
         internal_insert1(elem,elem2,nullptr, m_pRoot); 
     }
 
   protected:
     Node *CreateNode(Node *pParent, value_type &elem,LinkedValueType &elem2){
          return new Node(pParent,elem,elem2); }
-    virtual Node *internal_insert1(value_type &elem, LinkedValueType &elem2, Node *pParent, Node *&rpOrigin){
+    Node *internal_insert1(value_type &elem, LinkedValueType &elem2, Node *pParent, Node *&rpOrigin){
         if(!rpOrigin ) //  llegué al fondo de una rama
         {   ++m_size;
             return (rpOrigin = CreateNode(pParent,elem,elem2));
@@ -421,7 +417,7 @@ public:
     void inorder  (ostream &os)    {   inorder  (m_pRoot, os, 0);  }
     void postorder(ostream &os)    {   postorder(m_pRoot, os, 0);  }
     void preorder (ostream &os)    {   preorder (m_pRoot, os, 0);  }
-    virtual void print    (ostream &os)    {   print    (m_pRoot, os, 0);  }
+    void print    (ostream &os)    {   print    (m_pRoot, os, 0);  }
     void inorder(void (*visit) (value_type& item))
     {   inorder(m_pRoot, visit);    }
 
@@ -454,7 +450,7 @@ protected:
         }
     }
     
-    virtual void print(Node* pNode, std::ostream& os, size_t level){
+    void print(Node* pNode, std::ostream& os, size_t level){
         if (pNode) {
             Node* pParent = pNode->getParent();
             for (size_t i = 0; i < level; ++i) {
@@ -615,5 +611,5 @@ protected:
         return iter;
      }
 };
-
+}
 #endif

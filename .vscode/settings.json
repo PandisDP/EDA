@@ -40,6 +40,8 @@
         "unordered_map": "cpp",
         "unordered_set": "cpp",
         "ostream": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "__config": "cpp",
+        "__nullptr": "cpp"
     }
 }
